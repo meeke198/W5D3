@@ -50,6 +50,24 @@ class Question
         @author_id = options['author_id']
     end
 
+    def author
+        author = QuestionsDatabase.instance.execute(<<-SQL)
+            SELECT
+            fname, lname
+            FROM
+            users
+            WHERE
+            id = self.author_id
+        SQL
+        User.new(author.first)
+    end
+
+    def replies  
+        Reply.find_by_question_id(self.id)
+    end
+
+
+
 end
 
 
@@ -72,6 +90,14 @@ end
         @id = options['id']
         @fname = options['fname']
         @lname = options['lname']
+    end
+
+    def authored_questions
+        Question.find_by_author_id(self.id)
+    end
+
+    def authored_replies 
+        Reply.find_by_user_id(self.id)
     end
     
  end
@@ -112,6 +138,18 @@ end
         @user_id = options['user_id']
     end
 
+    def author
+
+        author = QuestionsDatabase.instance.execute(<<-SQL)
+            SELECT
+            fname, lname
+            FROM
+            users
+            WHERE
+            id = self.author_id
+        SQL
+        User.new(author.first)
+    end
 
 
  end
